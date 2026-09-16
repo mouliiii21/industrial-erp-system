@@ -2,19 +2,21 @@ const { hashPassword } = require('../../utils/password');
 
 /** @param {import('knex').Knex} knex */
 exports.seed = async function (knex) {
-  // Wipe in FK-safe order so re-running `npm run seed` is idempotent.
-  await knex('dispatch_items').del();
-  await knex('dispatches').del();
-  await knex('sales_order_items').del();
-  await knex('sales_orders').del();
-  await knex('quotation_items').del();
-  await knex('quotations').del();
-  await knex('enquiry_items').del();
-  await knex('enquiries').del();
-  await knex('inventory').del();
-  await knex('products').del();
-  await knex('customers').del();
-  await knex('users').del();
+  // TRUNCATE ... RESTART IDENTITY (not .del()) so re-running the seed is
+  // truly idempotent: DELETE removes rows but leaves Postgres's
+  // auto-increment sequences wherever they were, so IDs would keep
+  // drifting upward on every reseed. CASCADE handles FK-dependent tables
+  // in one statement regardless of order.
+  await knex.raw(`
+    TRUNCATE TABLE
+      dispatch_items, dispatches,
+      sales_order_items, sales_orders,
+      quotation_items, quotations,
+      enquiry_items, enquiries,
+      inventory, products,
+      customers, users
+    RESTART IDENTITY CASCADE
+  `);
 
   const [adminPasswordHash, salesPasswordHash] = await Promise.all([
     hashPassword('Admin@123'),
