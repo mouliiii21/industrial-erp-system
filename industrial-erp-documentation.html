@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Industrial ERP System — Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<style>
+  :root{
+    --bg:#0b0d10;
+    --bg-raised:#12161b;
+    --bg-inset:#0e1114;
+    --border:#1f252c;
+    --border-soft:#262d35;
+    --text:#dbe1e8;
+    --text-dim:#8993a1;
+    --text-faint:#5b6570;
+    --accent:#f0a63a;
+    --accent-strong:#ffc264;
+    --accent-dim:rgba(240,166,58,0.13);
+    --accent-line:rgba(240,166,58,0.35);
+    --mono:'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans:'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --ok:#7dd88c;
+    --err:#e5734f;
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="light"]){
+      --bg:#0b0d10; --bg-raised:#12161b; --bg-inset:#0e1114;
+      --border:#1f252c; --border-soft:#262d35;
+      --text:#dbe1e8; --text-dim:#8993a1; --text-faint:#5b6570;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0b0d10; --bg-raised:#12161b; --bg-inset:#0e1114;
+    --border:#1f252c; --border-soft:#262d35;
+    --text:#dbe1e8; --text-dim:#8993a1; --text-faint:#5b6570;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:var(--accent);}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+
+  .wrap{max-width:760px; margin:0 auto; padding:0 24px;}
+
+  /* ---------- top bar ---------- */
+  header.topbar{
+    position:sticky; top:0; z-index:40;
+    background:rgba(11,13,16,0.88);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+  }
+  .topbar-inner{
+    max-width:760px; margin:0 auto; padding:14px 24px;
+    display:flex; align-items:center; gap:18px;
+  }
+  .brand{
+    font-family:var(--mono); font-size:13px; color:var(--text);
+    white-space:nowrap; flex-shrink:0;
+  }
+  .brand .dot{color:var(--accent);}
+  nav.toc{
+    display:flex; gap:4px; overflow-x:auto; scrollbar-width:none;
+    -ms-overflow-style:none;
+  }
+  nav.toc::-webkit-scrollbar{display:none;}
+  nav.toc a{
+    font-family:var(--mono); font-size:12.5px; color:var(--text-dim);
+    text-decoration:none; white-space:nowrap; padding:6px 10px;
+    border-radius:5px; transition:color .15s, background .15s;
+  }
+  nav.toc a:hover{color:var(--text); background:var(--bg-raised);}
+  .gh-link{
+    margin-left:auto; flex-shrink:0;
+    font-family:var(--mono); font-size:12.5px;
+    color:var(--text); text-decoration:none;
+    border:1px solid var(--border-soft); border-radius:6px;
+    padding:6px 12px; transition:border-color .15s, color .15s;
+  }
+  .gh-link:hover{border-color:var(--accent); color:var(--accent-strong);}
+
+  /* ---------- section scaffolding ---------- */
+  section{padding:64px 0; border-bottom:1px solid var(--border);}
+  section:last-of-type{border-bottom:none;}
+  .tag{
+    font-family:var(--mono); font-size:12.5px; color:var(--accent);
+    background:var(--accent-dim); border:1px solid var(--accent-line);
+    display:inline-block; padding:3px 9px; border-radius:5px;
+    margin-bottom:16px;
+  }
+  h2{
+    font-size:26px; font-weight:600; margin:0 0 14px 0; letter-spacing:-0.01em;
+  }
+  h3{font-size:16px; font-weight:600; margin:0 0 8px 0; color:var(--text);}
+  p{color:var(--text-dim); margin:0 0 14px 0; max-width:66ch;}
+  p:last-child{margin-bottom:0;}
+  .lede{font-size:16.5px; color:var(--text-dim); max-width:64ch;}
+
+  /* ---------- hero ---------- */
+  .hero{padding:76px 0 56px 0; border-bottom:1px solid var(--border);}
+  .hero h1{
+    font-size:38px; font-weight:700; letter-spacing:-0.02em;
+    margin:14px 0 16px 0; line-height:1.15;
+  }
+  .hero .lede{margin-bottom:28px;}
+  .chiprow{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:36px;}
+  .chip{
+    font-family:var(--mono); font-size:12.5px; color:var(--text-dim);
+    background:var(--bg-raised); border:1px solid var(--border-soft);
+    padding:5px 11px; border-radius:999px;
+  }
+  .hero-actions{display:flex; flex-wrap:wrap; gap:12px; margin-bottom:44px;}
+  .btn{
+    font-family:var(--mono); font-size:13.5px; text-decoration:none;
+    padding:10px 18px; border-radius:6px; display:inline-block;
+  }
+  .btn-primary{background:var(--accent); color:#1a1305; font-weight:600;}
+  .btn-primary:hover{background:var(--accent-strong);}
+  .btn-ghost{border:1px solid var(--border-soft); color:var(--text);}
+  .btn-ghost:hover{border-color:var(--accent); color:var(--accent-strong);}
+
+  /* workflow chain */
+  .flow{
+    display:flex; flex-wrap:wrap; align-items:center; gap:0;
+    background:var(--bg-inset); border:1px solid var(--border);
+    border-radius:10px; padding:22px;
+  }
+  .flow-step{
+    font-family:var(--mono); font-size:12.5px; color:var(--text);
+    background:var(--bg-raised); border:1px solid var(--border-soft);
+    padding:8px 13px; border-radius:6px; white-space:nowrap;
+  }
+  .flow-step.active{border-color:var(--accent-line); color:var(--accent-strong); background:var(--accent-dim);}
+  .flow-arrow{color:var(--text-faint); padding:0 8px; font-family:var(--mono); font-size:13px;}
+
+  /* ---------- stack ---------- */
+  .stack-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:24px;}
+  .stack-group .stack-label{
+    font-family:var(--mono); font-size:11.5px; color:var(--text-faint);
+    text-transform:lowercase; margin-bottom:10px;
+  }
+  .stack-group .chip{margin:0 6px 6px 0;}
+
+  /* ---------- feature cards ---------- */
+  .feature-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(210px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:10px; overflow:hidden;}
+  .feature-card{background:var(--bg-raised); padding:20px;}
+  .feature-card h3{margin-bottom:8px;}
+  .feature-card ul{margin:0; padding-left:18px; color:var(--text-dim); font-size:14px;}
+  .feature-card li{margin-bottom:5px;}
+
+  /* ---------- roles ---------- */
+  .roles-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  .role-card{
+    border:1px solid var(--border-soft); border-radius:10px; padding:22px;
+    background:var(--bg-raised);
+  }
+  .role-card.admin{border-color:var(--accent-line);}
+  .role-name{font-family:var(--mono); font-size:13px; color:var(--accent); margin-bottom:12px; display:block;}
+  .role-card ul{margin:0; padding-left:18px; color:var(--text-dim); font-size:14.5px;}
+  .role-card li{margin-bottom:6px;}
+
+  /* ---------- code blocks ---------- */
+  pre{
+    background:var(--bg-inset); border:1px solid var(--border);
+    border-radius:8px; padding:16px 18px; overflow-x:auto;
+    font-family:var(--mono); font-size:12.8px; color:var(--text);
+    line-height:1.55;
+  }
+  code{font-family:var(--mono);}
+  .inline-note code{
+    background:var(--bg-raised); border:1px solid var(--border-soft);
+    padding:1px 6px; border-radius:4px; font-size:0.92em;
+  }
+
+  /* mermaid container */
+  .diagram-box{
+    background:var(--bg-inset); border:1px solid var(--border);
+    border-radius:10px; padding:20px; overflow-x:auto; margin-bottom:20px;
+  }
+
+  .entity-list{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px;}
+
+  /* ---------- api table ---------- */
+  table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  th{
+    text-align:left; font-family:var(--mono); font-weight:500; font-size:11.5px;
+    color:var(--text-faint); padding:8px 12px; border-bottom:1px solid var(--border-soft);
+  }
+  td{
+    padding:9px 12px; border-bottom:1px solid var(--border);
+    color:var(--text-dim); vertical-align:top;
+  }
+  td.mono, th.mono{font-family:var(--mono); color:var(--text);}
+  .method{
+    font-family:var(--mono); font-size:11.5px; font-weight:600;
+    padding:2px 7px; border-radius:4px; display:inline-block;
+  }
+  .method.get{color:#7fc7ff; background:rgba(127,199,255,0.1);}
+  .method.post{color:var(--ok); background:rgba(125,216,140,0.1);}
+  .method.patch{color:var(--accent-strong); background:var(--accent-dim);}
+  .role-pill{
+    font-family:var(--mono); font-size:11.5px; padding:2px 8px; border-radius:999px;
+    border:1px solid var(--border-soft); color:var(--text-dim);
+  }
+  .role-pill.admin{color:var(--accent-strong); border-color:var(--accent-line);}
+  .table-scroll{overflow-x:auto; border:1px solid var(--border); border-radius:8px; margin-bottom:22px;}
+  .table-scroll table{border:none;}
+  .table-scroll th:first-child, .table-scroll td:first-child{padding-left:14px;}
+
+  /* ---------- lists w/ check marks ---------- */
+  .check-list{list-style:none; margin:0; padding:0; display:grid; gap:9px;}
+  .check-list li{
+    padding-left:22px; position:relative; color:var(--text-dim); font-size:14.5px;
+  }
+  .check-list li::before{
+    content:"✓"; position:absolute; left:0; color:var(--accent); font-family:var(--mono); font-size:13px;
+  }
+
+  /* ---------- decision cards ---------- */
+  .decision{
+    border-left:2px solid var(--accent-line); padding:4px 0 4px 18px; margin-bottom:26px;
+  }
+  .decision:last-child{margin-bottom:0;}
+  .decision h3{margin-bottom:6px;}
+
+  /* ---------- test summary ---------- */
+  .test-summary{
+    display:flex; gap:14px; flex-wrap:wrap; margin-bottom:24px;
+  }
+  .test-stat{
+    background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:8px;
+    padding:16px 22px; flex:1; min-width:140px;
+  }
+  .test-stat .num{font-family:var(--mono); font-size:24px; color:var(--ok); font-weight:600;}
+  .test-stat .label{font-size:12.5px; color:var(--text-faint); margin-top:4px;}
+
+  /* ---------- setup steps ---------- */
+  .steps{counter-reset:step; margin:0; padding:0; list-style:none;}
+  .step{
+    display:grid; grid-template-columns:28px 1fr; gap:14px; margin-bottom:22px;
+  }
+  .step:last-child{margin-bottom:0;}
+  .step-num{
+    counter-increment:step; font-family:var(--mono); font-size:12.5px;
+    color:var(--accent); border:1px solid var(--accent-line); background:var(--accent-dim);
+    width:26px; height:26px; border-radius:6px; display:flex; align-items:center; justify-content:center;
+  }
+  .step-num::before{content:counter(step);}
+  .step h3{margin-bottom:6px;}
+
+  /* ---------- footer ---------- */
+  footer{padding:44px 0 64px 0;}
+  footer .lede{margin-bottom:6px;}
+  .foot-meta{font-family:var(--mono); font-size:12px; color:var(--text-faint); margin-top:18px;}
+
+  @media (max-width:640px){
+    .hero h1{font-size:30px;}
+    .roles-grid{grid-template-columns:1fr;}
+    section{padding:48px 0;}
+    .hero{padding:52px 0 40px 0;}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="brand">industrial<span class="dot">-</span>erp<span class="dot">-</span>system</span>
+    <nav class="toc">
+      <a href="#overview">overview</a>
+      <a href="#stack">stack</a>
+      <a href="#features">features</a>
+      <a href="#database">database</a>
+      <a href="#api">api</a>
+      <a href="#setup">setup</a>
+    </nav>
+    <a class="gh-link" href="https://github.com/mouliiii21/industrial-erp-system" target="_blank" rel="noopener">github ↗</a>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="hero" id="overview">
+    <span class="tag">## overview</span>
+    <h1>Industrial ERP System</h1>
+    <p class="lede">A full-stack resource-planning system that runs the sales side of a manufacturing business end to end — from the moment a customer enquires about a product to the moment stock leaves the warehouse. Built on PostgreSQL, Express, React and Node, with the backend as the sole source of truth for pricing, permissions and stock.</p>
+
+    <div class="flow">
+      <span class="flow-step active">Enquiry</span><span class="flow-arrow">→</span>
+      <span class="flow-step active">Quotation</span><span class="flow-arrow">→</span>
+      <span class="flow-step active">Accepted</span><span class="flow-arrow">→</span>
+      <span class="flow-step active">Sales Order</span><span class="flow-arrow">→</span>
+      <span class="flow-step active">Reservation</span><span class="flow-arrow">→</span>
+      <span class="flow-step active">Dispatch</span>
+    </div>
+
+    <div class="hero-actions" style="margin-top:28px;">
+      <a class="btn btn-primary" href="https://github.com/mouliiii21/industrial-erp-system" target="_blank" rel="noopener">View source</a>
+      <a class="btn btn-ghost" href="#setup">Run it locally</a>
+    </div>
+
+    <p style="font-size:13.5px; color:var(--text-faint);">Originally scoped as a 48-hour full-stack technical case study — enquiry-to-dispatch workflow, role-based access, and concurrency-safe inventory, built in roughly 10–14 hours of active work.</p>
+  </section>
+
+  <section id="stack">
+    <span class="tag">## stack</span>
+    <h2>Tech stack</h2>
+    <div class="stack-grid">
+      <div class="stack-group">
+        <div class="stack-label">frontend</div>
+        <span class="chip">React</span><span class="chip">Vite</span><span class="chip">Axios</span>
+      </div>
+      <div class="stack-group">
+        <div class="stack-label">backend</div>
+        <span class="chip">Node.js</span><span class="chip">Express</span><span class="chip">Knex.js</span><span class="chip">JWT</span><span class="chip">bcrypt</span><span class="chip">Zod</span>
+      </div>
+      <div class="stack-group">
+        <div class="stack-label">database</div>
+        <span class="chip">PostgreSQL 16+</span>
+      </div>
+      <div class="stack-group">
+        <div class="stack-label">testing</div>
+        <span class="chip">Jest</span><span class="chip">Supertest</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <span class="tag">## features</span>
+    <h2>What it does</h2>
+    <p class="lede" style="margin-bottom:24px;">Every screen maps to a stage of the sales workflow. Role checks, pricing math and stock math all happen on the server — the frontend never has the final say.</p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3>Auth & access</h3>
+        <ul>
+          <li>JWT-based login</li>
+          <li>Passwords hashed with bcrypt</li>
+          <li>ADMIN / SALES roles</li>
+          <li>Every protected route checked server-side</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <h3>Enquiries</h3>
+        <ul>
+          <li>Log a customer enquiry</li>
+          <li>Multiple line items per enquiry</li>
+          <li>Linked to customer and product records</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <h3>Quotations</h3>
+        <ul>
+          <li>Generated from an enquiry</li>
+          <li>Totals calculated server-side — never trusted from the client</li>
+          <li>Status-driven: draft → accepted</li>
+          <li>Accepted quotes convert into orders</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <h3>Sales orders</h3>
+        <ul>
+          <li>Created from an accepted quotation</li>
+          <li>One order per quotation, enforced</li>
+          <li>Confirm, dispatch or cancel</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <h3>Inventory</h3>
+        <ul>
+          <li>Tracks physical vs. reserved stock</li>
+          <li>Available = Physical − Reserved</li>
+          <li>Reservation is transaction-safe under concurrent requests</li>
+          <li>Blocks reservation when stock is short</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <h3>Dispatch</h3>
+        <ul>
+          <li>Ships reserved stock</li>
+          <li>Updates physical & reserved quantities in one transaction</li>
+          <li>Can't dispatch more than was reserved</li>
+          <li>Cancellation releases the reservation</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="roles">
+    <span class="tag">## roles</span>
+    <h2>Who can do what</h2>
+    <div class="roles-grid">
+      <div class="role-card admin">
+        <span class="role-name">ADMIN</span>
+        <ul>
+          <li>Confirm, dispatch and cancel sales orders</li>
+          <li>Update physical inventory quantities</li>
+          <li>View the full sales pipeline</li>
+        </ul>
+      </div>
+      <div class="role-card">
+        <span class="role-name">SALES</span>
+        <ul>
+          <li>Create and manage customer enquiries</li>
+          <li>Create quotations and change their status</li>
+          <li>Convert accepted quotations into sales orders</li>
+          <li>View inventory availability (read-only)</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:16px; font-size:13px; color:var(--text-faint);">All of the above is enforced in backend middleware, not just hidden in the UI — calling a protected endpoint directly without the right role still fails.</p>
+  </section>
+
+  <section id="database">
+    <span class="tag">## database</span>
+    <h2>Database design</h2>
+    <p>A normalized PostgreSQL schema — twelve tables connected by foreign keys, unique constraints and CHECK constraints — modelling the same pipeline the UI walks through: a customer's enquiry fans out into items, an enquiry turns into a quotation, an accepted quotation becomes at most one sales order, and a sales order's items get reserved and eventually dispatched.</p>
+    <div class="entity-list">
+      <span class="chip">Users</span><span class="chip">Customers</span><span class="chip">Products</span><span class="chip">Inventory</span>
+      <span class="chip">Enquiries</span><span class="chip">Enquiry Items</span><span class="chip">Quotations</span><span class="chip">Quotation Items</span>
+      <span class="chip">Sales Orders</span><span class="chip">Sales Order Items</span><span class="chip">Dispatches</span><span class="chip">Dispatch Items</span>
+    </div>
+    <div class="diagram-box">
+      <pre class="mermaid">
+erDiagram
+    USERS {
+        int id PK
+        varchar email UK
+        varchar role
+    }
+    CUSTOMERS {
+        int id PK
+        varchar name
+        varchar phone
+    }
+    PRODUCTS {
+        int id PK
+        varchar product_code UK
+        numeric unit_price
+    }
+    INVENTORY {
+        int product_id PK_FK
+        int physical_qty
+        int reserved_qty
+    }
+    ENQUIRIES {
+        int id PK
+        int customer_id FK
+        varchar status
+    }
+    ENQUIRY_ITEMS {
+        int id PK
+        int enquiry_id FK
+        int product_id FK
+        int quantity
+    }
+    QUOTATIONS {
+        int id PK
+        int enquiry_id FK
+        varchar status
+        numeric total
+    }
+    QUOTATION_ITEMS {
+        int id PK
+        int quotation_id FK
+        int product_id FK
+        numeric line_total
+    }
+    SALES_ORDERS {
+        int id PK
+        int quotation_id FK
+        varchar status
+    }
+    SALES_ORDER_ITEMS {
+        int id PK
+        int sales_order_id FK
+        int product_id FK
+    }
+    DISPATCHES {
+        int id PK
+        int sales_order_id FK
+        varchar status
+    }
+    DISPATCH_ITEMS {
+        int id PK
+        int dispatch_id FK
+        int product_id FK
+    }
+
+    CUSTOMERS ||--o{ ENQUIRIES : creates
+    ENQUIRIES ||--|{ ENQUIRY_ITEMS : contains
+    PRODUCTS ||--o{ ENQUIRY_ITEMS : requested_in
+    PRODUCTS ||--|| INVENTORY : has
+    ENQUIRIES ||--o{ QUOTATIONS : generates
+    QUOTATIONS ||--|{ QUOTATION_ITEMS : contains
+    PRODUCTS ||--o{ QUOTATION_ITEMS : quoted_as
+    QUOTATIONS ||--o| SALES_ORDERS : converts_to
+    SALES_ORDERS ||--|{ SALES_ORDER_ITEMS : contains
+    PRODUCTS ||--o{ SALES_ORDER_ITEMS : ordered_as
+    SALES_ORDERS ||--o{ DISPATCHES : has
+    DISPATCHES ||--|{ DISPATCH_ITEMS : contains
+      </pre>
+    </div>
+    <p style="font-size:13.5px;">A quotation converts into <span class="inline-note"><code>0..1</code></span> sales orders — the schema and the application logic both block a second order being created from the same quotation.</p>
+  </section>
+
+  <section id="structure">
+    <span class="tag">## structure</span>
+    <h2>Project structure</h2>
+    <pre>industrial-erp-system/
+│
+├── client/                 React + Vite frontend
+│   └── src/
+│       ├── components/
+│       ├── context/
+│       ├── pages/
+│       └── api/
+│
+├── server/                 Node.js + Express backend
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   ├── middleware/
+│   │   ├── validation/
+│   │   ├── db/
+│   │   │   ├── migrations/
+│   │   │   └── seeds/
+│   │   └── tests/
+│   ├── .env.example
+│   └── package.json
+│
+├── API_DOCUMENTATION.md
+├── ER_DIAGRAM.md
+└── README.md</pre>
+  </section>
+
+  <section id="api">
+    <span class="tag">## api</span>
+    <h2>API reference</h2>
+    <p style="margin-bottom:20px;">Base URL: <span class="inline-note"><code>http://localhost:4000/api</code></span>. Every protected route expects <span class="inline-note"><code>Authorization: Bearer &lt;token&gt;</code></span>.</p>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th class="mono">method</th><th class="mono">endpoint</th><th>auth</th><th>role</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="method post">POST</span></td><td class="mono">/auth/login</td><td>—</td><td><span class="role-pill">public</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td class="mono">/products</td><td>yes</td><td><span class="role-pill">any</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td class="mono">/enquiries</td><td>yes</td><td><span class="role-pill">any</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td class="mono">/enquiries</td><td>yes</td><td><span class="role-pill">SALES</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td class="mono">/quotations</td><td>yes</td><td><span class="role-pill">any</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td class="mono">/quotations</td><td>yes</td><td><span class="role-pill">SALES</span></td></tr>
+          <tr><td><span class="method patch">PATCH</span></td><td class="mono">/quotations/:id/status</td><td>yes</td><td><span class="role-pill">SALES</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td class="mono">/quotations/:id/convert</td><td>yes</td><td><span class="role-pill">SALES</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td class="mono">/sales-orders</td><td>yes</td><td><span class="role-pill">any</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td class="mono">/sales-orders/:id/confirm</td><td>yes</td><td><span class="role-pill admin">ADMIN</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td class="mono">/sales-orders/:id/dispatch</td><td>yes</td><td><span class="role-pill admin">ADMIN</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td class="mono">/sales-orders/:id/cancel</td><td>yes</td><td><span class="role-pill admin">ADMIN</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td class="mono">/inventory</td><td>yes</td><td><span class="role-pill">any</span></td></tr>
+          <tr><td><span class="method patch">PATCH</span></td><td class="mono">/inventory/:productId</td><td>yes</td><td><span class="role-pill admin">ADMIN</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:8px;">Login</h3>
+    <pre>POST /api/auth/login
+{
+  "email": "admin@erp.test",
+  "password": "Admin@123"
+}
+
+→ 200 OK
+{
+  "token": "&lt;jwt&gt;",
+  "user": { "id": 1, "email": "admin@erp.test", "role": "ADMIN" }
+}</pre>
+
+    <h3 style="margin-top:24px;">Inventory availability</h3>
+    <pre>GET /api/inventory
+
+→ 200 OK
+[
+  {
+    "productId": 1,
+    "productCode": "IND-A-001",
+    "physicalQty": 500,
+    "reservedQty": 60,
+    "availableQty": 440
+  }
+]</pre>
+    <p style="font-size:13px; margin-top:6px;">availableQty is always Physical − Reserved, recomputed on every read.</p>
+  </section>
+
+  <section id="security">
+    <span class="tag">## security</span>
+    <h2>Security & data integrity</h2>
+    <ul class="check-list">
+      <li>JWT authentication with an expiring token</li>
+      <li>Passwords hashed with bcrypt, never stored in plain text</li>
+      <li>Role-based authorization enforced on the backend, not the UI</li>
+      <li>Request bodies validated with Zod before they touch a query</li>
+      <li>Parameterized queries throughout, via Knex.js</li>
+      <li>Foreign key, unique and CHECK constraints at the database level</li>
+      <li>Quotation totals computed server-side, immune to client tampering</li>
+      <li>Inventory reservation wrapped in database transactions</li>
+    </ul>
+  </section>
+
+  <section id="testing">
+    <span class="tag">## testing</span>
+    <h2>Testing</h2>
+    <div class="test-summary">
+      <div class="test-stat"><div class="num">2 / 2</div><div class="label">test suites passing</div></div>
+      <div class="test-stat"><div class="num">11 / 11</div><div class="label">tests passing</div></div>
+      <div class="test-stat"><div class="num">Jest</div><div class="label">+ Supertest</div></div>
+    </div>
+    <p style="margin-bottom:12px;">Coverage includes login and role checks, the enquiry-to-quotation-to-order path, quotation total validation, inventory reservation under concurrent requests, and dispatch.</p>
+    <pre>npm test
+
+Test Suites: 2 passed, 2 total
+Tests:       11 passed, 11 total</pre>
+  </section>
+
+  <section id="decisions">
+    <span class="tag">## decisions</span>
+    <h2>Technical decisions</h2>
+
+    <div class="decision">
+      <h3>Backend-calculated quotation totals</h3>
+      <p>The client sends quantities and prices; the server recomputes the total independently before it's stored. A tampered request body can't change what gets billed.</p>
+    </div>
+    <div class="decision">
+      <h3>Transaction-safe inventory reservation</h3>
+      <p>Reserving stock is a conditional update inside a transaction — it only succeeds when <span class="inline-note"><code>physical_qty − reserved_qty ≥ requested_qty</code></span> holds at the moment of the write. Two requests racing for the last units can't both succeed.</p>
+    </div>
+    <div class="decision">
+      <h3>Normalized relational schema</h3>
+      <p>Twelve linked tables with foreign keys and constraints, rather than a looser document shape — appropriate for data where referential integrity (one order per quotation, valid product references) actually matters.</p>
+    </div>
+    <div class="decision">
+      <h3>Backend-enforced RBAC</h3>
+      <p>Role checks live in Express middleware, not component visibility. Hiding a button isn't access control; a direct API call from a SALES account still gets rejected on an ADMIN-only route.</p>
+    </div>
+  </section>
+
+  <section id="setup">
+    <span class="tag">## setup</span>
+    <h2>Running it locally</h2>
+    <ol class="steps">
+      <li class="step">
+        <span class="step-num"></span>
+        <div>
+          <h3>Prerequisites</h3>
+          <p>Node.js, npm, and PostgreSQL 16+ installed locally.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num"></span>
+        <div>
+          <h3>Install dependencies</h3>
+          <pre>cd server && npm install
+cd ../client && npm install</pre>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num"></span>
+        <div>
+          <h3>Configure environment</h3>
+          <p>Create <span class="inline-note"><code>server/.env</code></span> from <span class="inline-note"><code>.env.example</code></span> with your database URL, JWT secret and port.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num"></span>
+        <div>
+          <h3>Create & migrate the databases</h3>
+          <pre>createdb erp_case_study
+createdb erp_case_study_test
+npm run migrate
+npm run seed</pre>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num"></span>
+        <div>
+          <h3>Start both servers</h3>
+          <pre># server/  → http://localhost:4000
+npm run dev
+
+# client/  → http://localhost:5173
+npm run dev</pre>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num"></span>
+        <div>
+          <h3>Sign in with a seeded account</h3>
+          <p><span class="inline-note"><code>admin@erp.test</code></span> / <span class="inline-note"><code>Admin@123</code></span> for the ADMIN role, or <span class="inline-note"><code>sales@erp.test</code></span> / <span class="inline-note"><code>Sales@123</code></span> for SALES. Local/demo credentials only.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section id="roadmap">
+    <span class="tag">## roadmap</span>
+    <h2>Possible next steps</h2>
+    <ul class="check-list">
+      <li>Product and customer master-data management UI</li>
+      <li>Advanced search, filtering and pagination</li>
+      <li>Reporting and analytics dashboard</li>
+      <li>PDF quotation generation</li>
+      <li>Email notifications on status changes</li>
+      <li>Production deployment</li>
+      <li>Broader frontend test coverage</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p class="lede">Industrial ERP System — a PERN-stack case study in getting the unglamorous parts of a sales pipeline right: who's allowed to do what, whose number is trusted, and what happens when two requests want the same unit of stock.</p>
+    <div class="foot-meta">Mouli Jain · <a href="https://github.com/mouliiii21/industrial-erp-system" target="_blank" rel="noopener">github.com/mouliiii21/industrial-erp-system</a></div>
+  </footer>
+
+</div>
+
+<script>
+  try{
+    mermaid.initialize({
+      startOnLoad:true,
+      theme:'base',
+      themeVariables:{
+        background:'#0e1114',
+        primaryColor:'#12161b',
+        primaryBorderColor:'#f0a63a',
+        primaryTextColor:'#dbe1e8',
+        lineColor:'#f0a63a',
+        secondaryColor:'#12161b',
+        tertiaryColor:'#0e1114',
+        fontFamily:'IBM Plex Mono, monospace',
+        fontSize:'12px'
+      }
+    });
+  }catch(e){ console.error('mermaid init failed', e); }
+</script>
+
+</body>
+</html>
