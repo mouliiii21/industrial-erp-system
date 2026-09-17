@@ -5,6 +5,7 @@ import Quotations from './pages/Quotations';
 import SalesOrders from './pages/SalesOrders';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
+import Inventory from './pages/Inventory';
 
 export default function App() {
   return (
@@ -40,6 +41,16 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+  path="/inventory"
+  element={
+    <ProtectedRoute>
+      <Layout>
+        <Inventory />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
       <Route path="*" element={<Navigate to="/enquiries" replace />} />
     </Routes>
   );

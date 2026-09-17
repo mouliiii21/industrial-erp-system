@@ -33,6 +33,46 @@ async function getAvailability() {
  * @param {import('knex').Knex.Transaction} trx
  * @param {{productId:number, quantity:number}[]} items
  */
+
+async function updatePhysicalQuantity(productId, physicalQty) {
+  if (!Number.isInteger(physicalQty) || physicalQty < 0) {
+    throw new AppError('physicalQty must be a non-negative integer', 400);
+  }
+
+  const inventory = await db('inventory')
+    .where('product_id', productId)
+    .first();
+
+  if (!inventory) {
+    throw new AppError(`Inventory not found for product ${productId}`, 404);
+  }
+
+  if (physicalQty < inventory.reserved_qty) {
+    throw new AppError(
+      `Physical quantity cannot be less than reserved quantity (${inventory.reserved_qty})`,
+      409
+    );
+  }
+
+  const [updated] = await db('inventory')
+    .where('product_id', productId)
+    .update({
+      physical_qty: physicalQty,
+    })
+    .returning([
+      'product_id',
+      'physical_qty',
+      'reserved_qty',
+    ]);
+
+  return {
+    productId: updated.product_id,
+    physicalQty: updated.physical_qty,
+    reservedQty: updated.reserved_qty,
+    availableQty: updated.physical_qty - updated.reserved_qty,
+  };
+}
+
 async function reserveItems(trx, items) {
   for (const item of items) {
     const affectedRows = await trx('inventory')
@@ -84,4 +124,10 @@ async function dispatchItems(trx, items) {
   }
 }
 
-module.exports = { getAvailability, reserveItems, releaseItems, dispatchItems };
+module.exports = {
+  getAvailability,
+  updatePhysicalQuantity,
+  reserveItems,
+  releaseItems,
+  dispatchItems,
+};
