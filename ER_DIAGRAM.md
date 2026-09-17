@@ -281,33 +281,3 @@ The database structure supports the complete workflow:
 
 ````
 
-### Then save it and run
-
-```powershell
-git status
-````
-
-If you see:
-
-```text
-Untracked files:
-    ER_DIAGRAM.md
-```
-
-run:
-
-```powershell
-git add ER_DIAGRAM.md
-git commit -m "Add database ER diagram"
-git push
-```
-
-Then:
-
-```powershell
-git status
-```
-
-Send me that final output.
-
-**One important note:** because we only verified the migration *filenames* so far, I've kept the column definitions based on the schema structure we've already established. If GitHub rendering shows the Mermaid diagram correctly, we're good; if you want absolute schema-to-diagram verification afterward, we can quickly check the migrations before submission.
